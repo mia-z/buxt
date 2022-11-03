@@ -25,7 +25,8 @@
 
 - [x] MVP Status
 - [ ] Nested routing
-- [ ] Route parameters 
+- [ ] Route parameters
+- [ ] More detailed usage instructions
 
 
 ---
