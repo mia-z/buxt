@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "lib": ["ESNext"],
+        "module": "esnext",
+        "target": "esnext",
+        "moduleResolution": "node",
+        "baseUrl": "./",
+        "types": [
+            "bun-types"
+        ],
+        "paths": {
+            "buxt": ["index.d.ts"]
+        }
+    }
+}

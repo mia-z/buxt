@@ -1,0 +1,30 @@
+{
+  "name": "buxt",
+  "version": "0.0.1",
+  "author": "Ryan C",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mia-z/buxt"
+  },
+  "main": "index.ts",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "browser": {
+        "default": "./index.ts"
+      }
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/mia-z/buxt/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "bun dev.ts",
+    "test": "bun wiptest test"
+  },
+  "devDependencies": {
+    "bun-types": "^0.2.2"
+  }
+}

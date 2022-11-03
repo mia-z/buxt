@@ -1,0 +1,5 @@
+[bundle]
+entryPoints = ["./dist/index.ts"]
+
+[dev]
+port = 3000
