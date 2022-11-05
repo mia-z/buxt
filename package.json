@@ -1,7 +1,8 @@
 {
   "name": "buxt",
-  "version": "0.0.1-alpha",
+  "version": "0.0.6-alpha",
   "author": "Ryan C",
+  "module": "index.ts",
   "type": "module",
   "repository": {
     "type": "git",
