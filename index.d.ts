@@ -1,19 +1,21 @@
-declare type ScanPaths = (path: string, currentLevel: string) => Promise<Array<RoutePath>>
-declare type ValidateRoute = (routepath: RoutePath) => Promise<Route> | never;
+export declare type ScanPaths = (path: string, currentLevel: string) => Promise<Array<RoutePath>>
+export declare type ValidateRoute = (routepath: RoutePath) => Promise<Route> | never;
 
 declare type RequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH";
 
-declare class BuxtRequest {
-    constructor(baseRequest: Request);
+export declare class BuxtRequest {
+    constructor(baseRequest: Request, paramData: Route | null);
 
     request: Request;
     method: string;
     path: string;
     matchPath: string;
+    folderPath: string;
 
     query: { [key: string]: string };
     headers: { [key: string]: string };
     params: { [key: string]: string };
+    rotueParams: { [key: string]: string};
 
     body: any;
     blob: any;
@@ -44,10 +46,11 @@ export declare class BuxtServer {
     routes: string[];
     port: number;
     baseAddress: string;
+    routeRoot: string;
 
-    private constructor(port: number);
+    private constructor(port: number, routeRoot: string);
 
-    static createServer(): Promise<BuxtServer>;
+    static createServer(port: number, routeRoot: string): Promise<BuxtServer>;
 
     private registerRoutes(): Promise<void>;
     private handleRequest(): Promise<Response> | Response;
@@ -63,6 +66,12 @@ export declare type RoutePath = {
 
 export declare type Route = {
     route: string,
-    parameters: string[],
+    routeParameters: RouteParameters,
     delegate: (req: BuxtRequest, res: BuxtResponse) => Promise<BuxtResponse>;
 }
+
+export declare type RouteParameters = {
+    [key: string]: string
+}
+
+export default function (port: number): Promise<BuxtServer>;
