@@ -1,8 +1,18 @@
 import { Transpiler } from "bun";
-import { Route, RoutePath, ValidateRoute } from "buxt";
+import { Route, RoutePath, ValidateRoute } from "index.d";
 
 const transpiler = new Transpiler({ loader: "ts" });
 
+
+/**
+ * Function which validates routes that were found previously.
+ * Makes sure they adhere to the correct rules of the application, otherwise throws an error
+ * @date 11/5/2022 - 11:50:56 PM
+ *
+ * @async
+ * @param {RoutePath} path - the {RoutePath} to validate
+ * @returns {(Promise<Route | never>)} - {Route} object containing successfully validated files which adhere to the rules of the application (a valid path and a valid exported default function)
+ */
 const validateRoute: ValidateRoute = async (path: RoutePath): Promise<Route | never> => {
     const isTsExtension = path.FullPath.split(".")[path.FullPath.split(".").length - 1] === "ts";
     if (!isTsExtension) {
@@ -34,7 +44,7 @@ const validateRoute: ValidateRoute = async (path: RoutePath): Promise<Route | ne
 
     return {
         route: parts[0],
-        parameters: params,
+        routeParameters: {},
         delegate: require(path.FullPath).default
     };
 }
