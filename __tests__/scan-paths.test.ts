@@ -1,4 +1,5 @@
 import { describe, it, expect } from "bun:test";
+import { RoutePath } from "buxt";
 import { join } from "path";
 import { cwd } from "process";
 import ScanPaths from "src/utils/ScanPaths";
@@ -8,11 +9,11 @@ const root = join(cwd(), "__tests__", "routes");
 describe("Route mapper tests", () => {
     it("will recursively fetch the paths of files inside the 'routes' folder", async () => {
         const paths: Array<RoutePath> = [ 
-            { AbsolutePath: "messages.ts", FullPath: root + "/messages.ts", EffectiveRoute: "messages", },
-            { AbsolutePath: "messages/[id].ts", FullPath: root + "/messages/[id].ts", EffectiveRoute: "messages/[id]" },
-            { AbsolutePath: "messages/new_message.ts", FullPath: root + "/messages/new_message.ts", EffectiveRoute: "messages/new_message"  },
-            { AbsolutePath: "user/[user]/[likes].ts", FullPath: root + "/user/[user]/[likes].ts", EffectiveRoute: "user/[user]/[likes]"  },
-            { AbsolutePath: "user/[user].ts", FullPath: root + "/user/[user].ts", EffectiveRoute: "user/[user]"  }
+            { AbsolutePath: "messages.ts", FullPath: root + "/messages.ts" },
+            { AbsolutePath: "messages/[id].ts", FullPath: root + "/messages/[id].ts" },
+            { AbsolutePath: "messages/new_message.ts", FullPath: root + "/messages/new_message.ts" },
+            { AbsolutePath: "user/[user]/[likes].ts", FullPath: root + "/user/[user]/[likes].ts" },
+            { AbsolutePath: "user/[user].ts", FullPath: root + "/user/[user].ts" }
         ];
 
         const routePaths = await ScanPaths(root, "");

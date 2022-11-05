@@ -32,6 +32,47 @@ export class BuxtServer {
         }));
     }
 
+    private matchRoute(routeToMatch: string): Route {
+        let currentDepth = 0;
+        const routeToMatchSections = routeToMatch.split("/");
+        for (let route of this.routes) {
+            const mappedRoute = route.route.split("/");
+            for (let section of mappedRoute) {
+                if (section === routeToMatchSections[currentDepth]) {
+                    if (mappedRoute.length > currentDepth + 1 && 
+                        routeToMatchSections.length > currentDepth + 1) {
+                        currentDepth++;
+                        continue;
+                    } else if (mappedRoute.length > routeToMatchSections.length ||
+                        mappedRoute.length > routeToMatchSections.length) {
+                        break;
+                    } else {
+                        return route;
+                    }
+                }
+                if (currentDepth > 0) {
+                    if (section.match(/(?<=\[)(.*?)(?=\])/g)) {
+                        if (mappedRoute.length > currentDepth + 1 && 
+                            routeToMatchSections.length > currentDepth + 1) {
+                            currentDepth++;
+                            continue;
+                        } else if (mappedRoute.length > routeToMatchSections.length ||
+                            mappedRoute.length > routeToMatchSections.length) {
+                            break;
+                        } else {
+                            return route;
+                        }
+                    }
+                }
+            }
+            currentDepth = 0;
+        }
+    }
+
+    private async handleRequest(): Promise<void> {
+
+    }
+
     async listen(): Promise<void> {
         console.info("Serving the following endpoints");
         this.routes.forEach(async (route, index) => {
@@ -42,12 +83,9 @@ export class BuxtServer {
             fetch: async (req) => {
                 const bReq = await BuxtRequest.buildRequest(req);
                 const bRes = new BuxtResponse();
-                for (let route of this.routes) {
-                    if (route.route === bReq.matchPath) {
-                        await route.delegate(bReq, bRes);
-                        return bRes.getResponse();
-                    }
-                }
+                const r = this.matchRoute(bReq.matchPath);
+
+                console.log(r);
 
                 return new Response("Not Found", { status: 404 });
             }
