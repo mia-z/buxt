@@ -1,1 +1,6 @@
 __tests__
+bun.lockb
+dev.ts
+routes
+README.md
+*.http
