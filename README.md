@@ -26,7 +26,7 @@
 - [x] MVP Status
 - [x] Nested routing
 - [x] Route parameters
-- [ ] Catch-all routes
+- [ ] Catch-all routes on same level as named routes
 - [ ] More detailed usage instructions
 
 
