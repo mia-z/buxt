@@ -24,8 +24,9 @@
 ## <p align="center"> Features/Roadmap
 
 - [x] MVP Status
-- [ ] Nested routing
-- [ ] Route parameters
+- [x] Nested routing
+- [x] Route parameters
+- [ ] Catch-all routes
 - [ ] More detailed usage instructions
 
 
