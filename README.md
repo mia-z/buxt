@@ -15,7 +15,6 @@
 ---
 
 ## <p align="center"> **Note**
-<p align="center"> The project is still under heavy construction. So far the only thing that's been implemented is a client which handles the security token and basic calls to the general endspoints.
 
 <p align="center"> The MVP status is defined as a REST API server which can handle requests from a single, non-nested route, successfully.
 
