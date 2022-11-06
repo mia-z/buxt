@@ -1,7 +1,7 @@
 "use strict";
 
 import { BuxtServer } from "./src/BuxtServer";
-import type { BuxtRequest, BuxtResponse, Route, RoutePath } from "./index.d";
+import type { BuxtRequest, BuxtResponse, Route, RoutePath } from "index.d";
 
 const factoryFunction = BuxtServer.createServer;
 
