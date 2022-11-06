@@ -1,3 +1,14 @@
+import { RouteParameters } from "index.d";
+import { Route } from "index";
+
+/**
+ * Request class representing request data
+ * @date 11/6/2022 - 12:01:45 AM
+ *
+ * @export
+ * @class BuxtRequest
+ * @typedef {BuxtRequest}
+ */
 export default class BuxtRequest {
     request: Request;
     method: string;
@@ -7,6 +18,7 @@ export default class BuxtRequest {
     query: { [key: string]: string } = {};
     headers: { [key: string]: string } = {};
     params: { [key: string]: string } = {};
+    rotueParams: RouteParameters = {};
 
     body: any;
     blob: any;
@@ -27,12 +39,23 @@ export default class BuxtRequest {
         });
     }
 
-    static async buildRequest(req: Request): Promise<BuxtRequest> {
-        const br = new BuxtRequest(req);
-        const body = await req.json();
-        req.arrayBuffer;
+    
+    /**
+     * Function that builds the request object which can be used when building a response
+     * @date 11/6/2022 - 12:02:18 AM
+     *
+     * @static
+     * @async
+     * @param {Request} req
+     * @returns {Promise<BuxtRequest>} - Promise containing the transformed request object to be used later on
+     */
+    static async buildRequest(baseRequest: Request, paramData: RouteParameters | null = null): Promise<BuxtRequest> {
+        const br = new BuxtRequest(baseRequest);
+        const body = await baseRequest.json();
+        br.rotueParams = paramData;
+        baseRequest.arrayBuffer;
         br.body = body;
-        br.blob = req.blob();
+        br.blob = baseRequest.blob();
         return br;
     }
 }
