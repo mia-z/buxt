@@ -16,7 +16,7 @@
 
 ## <p align="center"> **Note**
 
-<p align="center"> The MVP status is defined as a REST API server which can handle requests from a single, non-nested route, successfully.
+<p align="center"> This project is currently not usable - if you try to use it, it will just return 404. 
 
 ---
 
