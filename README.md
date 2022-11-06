@@ -26,6 +26,9 @@
 - [x] Nested routing
 - [x] Route parameters
 - [ ] Catch-all routes on same level as named routes
+- [ ] Implement response handling logic fully
+- [ ] Middleware
+- [ ] CORS solution
 - [ ] More detailed usage instructions
 
 
