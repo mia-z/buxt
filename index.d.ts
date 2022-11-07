@@ -1,7 +1,7 @@
 export declare type ScanPaths = (path: string, currentLevel: string) => Promise<Array<RoutePath>>
 export declare type ValidateRoute = (routepath: RoutePath) => Promise<Route> | never;
 
-declare type RequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH";
+declare type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH";
 
 export declare class BuxtRequest {
     constructor(baseRequest: Request, paramData: Route | null);
@@ -10,12 +10,11 @@ export declare class BuxtRequest {
     method: string;
     path: string;
     matchPath: string;
-    folderPath: string;
 
     query: { [key: string]: string };
     headers: { [key: string]: string };
     params: { [key: string]: string };
-    rotueParams: { [key: string]: string};
+    routeParameters: RouteParameters;
 
     body: any;
     blob: any;
@@ -47,12 +46,16 @@ export declare class BuxtServer {
     port: number;
     baseAddress: string;
     routeRoot: string;
+    cors: boolean;
+    corsConfig?: CorsConfig;
 
+    private constructor(config: BuxtConfig)
     private constructor(port: number, routeRoot: string);
 
-    static createServer(port: number, routeRoot: string): Promise<BuxtServer>;
+    static createServer(config: BuxtConfig): Promise<BuxtServer>;
+    static createServer(port: number, routeRoot?: string): Promise<BuxtServer>;
 
-    private registerRoutes(): Promise<void>;
+    private registerRoutes(req: BuxtRequest, res: BuxtResponse, mappedRoute: Route): Promise<void>;
     private handleRequest(): Promise<Response> | Response;
 
     listen(): Promise<void>;
@@ -72,6 +75,19 @@ export declare type Route = {
 
 export declare type RouteParameters = {
     [key: string]: string
+}
+
+
+export type BuxtConfig = {
+    port: number,
+    routeRoot: string,
+    cors?: boolean,
+    corsConfig?: CorsConfig
+}
+
+export type CorsConfig = {
+    origins: string[],
+    allowedMethods?: HttpMethod[]
 }
 
 export default function (port: number): Promise<BuxtServer>;

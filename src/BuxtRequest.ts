@@ -18,7 +18,7 @@ export default class BuxtRequest {
     query: { [key: string]: string } = {};
     headers: { [key: string]: string } = {};
     params: { [key: string]: string } = {};
-    routeParams: RouteParameters = {};
+    routeParameters: RouteParameters = {};
 
     body: any;
     blob: any;
@@ -52,7 +52,7 @@ export default class BuxtRequest {
     static async buildRequest(baseRequest: Request, paramData: RouteParameters | null = null): Promise<BuxtRequest> {
         const br = new BuxtRequest(baseRequest);
         const body = await baseRequest.json();
-        br.routeParams = paramData;
+        br.routeParameters = paramData;
         baseRequest.arrayBuffer;
         br.body = body;
         br.blob = baseRequest.blob();

@@ -1,6 +1,6 @@
 {
   "name": "buxt",
-  "version": "0.0.7-alpha",
+  "version": "0.0.8-alpha",
   "author": "Ryan C",
   "module": "index.ts",
   "type": "module",
