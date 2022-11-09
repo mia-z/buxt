@@ -85,12 +85,12 @@ export default class BuxtResponse {
         return this;
     }
     
-     /**
-      * Gets the headers of the underlying response
-      * @date 11/5/2022 - 11:58:04 PM
-      *
-      * @returns {HeadersInit} - {HeadersInit} object of the underlying response
-      */
+    /**
+     * Gets the headers of the underlying response
+     * @date 11/5/2022 - 11:58:04 PM
+     *
+     * @returns {HeadersInit} - {HeadersInit} object of the underlying response
+     */
     getHeaders(): HeadersInit {
         return this.options.headers;
     }
