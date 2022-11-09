@@ -38,7 +38,6 @@ export default class BuxtRequest {
             this.headers[key] = value;
         });
     }
-
     
     /**
      * Function that builds the request object which can be used when building a response
