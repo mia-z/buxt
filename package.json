@@ -1,6 +1,6 @@
 {
   "name": "buxt",
-  "version": "0.0.10-alpha",
+  "version": "0.0.11-alpha",
   "author": "Ryan C",
   "module": "index.ts",
   "type": "module",
@@ -23,7 +23,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "bun dev.ts",
-    "test": "bun wiptest test"
+    "test": "bun wiptest test",
+    "build": "bun swc ./src -d ./dist"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.57",
