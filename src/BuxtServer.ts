@@ -109,7 +109,7 @@ export class BuxtServer {
         }
 
         if (!routeRoot.match(/^(src\/routes|routes)$/)) {
-            console.warn("You're not using a standard route path (<project-root>/routes or <project-root>/src/routes)");
+            console.warn("You're not using the default route path (<project-root>/routes or <project-root>/src/routes)");
         }
     }
 
@@ -122,8 +122,7 @@ export class BuxtServer {
      * @returns {Promise<void>} 
      */
     private async registerRoutes(): Promise<void> {
-        const basePath = join(cwd(), this.routeRoot);
-        this.routePaths = await ScanPaths(basePath, "");
+        this.routePaths = await ScanPaths(this.routeRoot, "");
         this.routes = await Promise.all(this.routePaths.map((rp, index) => {
             return ValidateRoute(rp);
         }));
