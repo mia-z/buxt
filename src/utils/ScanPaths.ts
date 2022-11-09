@@ -11,7 +11,7 @@ import { Route, RoutePath, ScanPaths } from "index.d";
  * @async
  * @param {string} basePath - the base filesystem path where the routes are located. By default this is <project-root>/routes
  * @param {string} currentPath - the current path being recursed
- * @returns {Promise<Array<RoutePath>>} - array of {RoutePath} containing data about scanned directory information
+ * @returns {Promise<Array<RoutePath>>} - array of {RoutePath} containing data about scanned directory
  */
 const ScanPaths: ScanPaths = async (basePath: string, currentPath: string): Promise<Array<RoutePath>> => {
     try {
