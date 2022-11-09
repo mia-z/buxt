@@ -1,7 +1,8 @@
-import { statSync } from "fs";
+import { statSync, existsSync } from "fs";
 import { readdir } from "fs/promises";
 import { join } from "path";
 import { Route, RoutePath, ScanPaths } from "index.d";
+import { cwd } from "process";
 
 
 /**
@@ -18,15 +19,31 @@ const ScanPaths: ScanPaths = async (basePath: string, currentPath: string): Prom
         let paths: RoutePath[] = [];
         let files: string[];
 
-        let thisPath = join(basePath, currentPath);
+        let thisPath = join(cwd(), basePath, currentPath);
         if (!thisPath) {
             throw new Error(`Cant make routes in the given path\nTried joining basePath:${basePath} and currentPath:${currentPath}`);
         }
+
+        //TODO: This feels really dirty, but I can't think of something simpler right now.
+        //This is just meant to exhaust the 2 default paths (routes and src/routes) if a custom route root is not given in the config.
+        if (basePath === "routes") {
+            const rootExists = existsSync(thisPath);
+            console.log(rootExists);
+            if (!rootExists) {
+                return await ScanPaths("src/routes", "");
+            } else if (rootExists) { 
+                //Fallthrough
+            } else {
+                throw new Error(`Root path error`);
+            }
+        }
+
         try {
             files = await readdir(thisPath);
         } catch (e) {
-            throw new Error(`Couldnt find any valid routes under the given path: ${thisPath}`);
+            throw new Error(`Error reading the directory: ${thisPath} -- ${e.message}`);
         }
+
         for (const file of files) {
             const fullPath = join(thisPath, file);
             const fileStats = statSync(fullPath);
