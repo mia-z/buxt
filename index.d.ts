@@ -90,4 +90,7 @@ export type CorsConfig = {
     allowedMethods?: HttpMethod[]
 }
 
-export default function (port: number): Promise<BuxtServer>;
+declare function defaultFactoryFunction(port: number, routeRoot?: string): Promise<BuxtServer>;
+declare function defaultFactoryFunction(config: BuxtConfig): Promise<BuxtServer>;
+
+export default defaultFactoryFunction;

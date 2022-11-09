@@ -54,7 +54,7 @@ export class BuxtServer {
      * @async
      * @param {number} port - port number to expose the server on
      * @param {string} routeRoot - the directory which serves the routes
-     * @param {BuxtConfig} port - config object
+     * @param {BuxtConfig} config - config object
      * @returns {Promise<BuxtServer>} - Promise containing the created BuxtServer class
      */
     static async createServer(port: number, routeRoot?: string): Promise<BuxtServer>;
@@ -189,6 +189,16 @@ export class BuxtServer {
         return res.getResponse();
     }
 
+    
+    /**
+     * Method for handling cors requests
+     * @date 11/8/2022 - 2:25:51 PM
+     *
+     * @private
+     * @async
+     * @param {Request} req - Request object from underlying request
+     * @returns {(Promise<Response> | null)} - returns null when cors has been disabled by the user, or not explicitly activated.
+     */
     private async handleCors(req: Request): Promise<Response> | null {
         if (this.cors) {
             if (req.method === "OPTIONS" || req.headers.get("Sec-Fetch-Mode") === "cors") {
