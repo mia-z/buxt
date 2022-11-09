@@ -57,9 +57,25 @@ export declare class BuxtServer {
 
     private registerRoutes(req: BuxtRequest, res: BuxtResponse, mappedRoute: Route): Promise<void>;
     private handleRequest(): Promise<Response> | Response;
+    private validateCors(req: Request): string;
+    private appendCorsHeaders(response: BuxtResponse, origin: string): void;
+    private handleCorsOptionsRequest(req: Request): BuxtResponse;
+    private handleCorsHeaderRequest(req: Request, res: BuxtResponse): void;
 
     listen(): Promise<void>;
     stop(): void;
+}
+
+export declare class BuxtError extends Error {
+    errorHeaders: { [key: string]: string };
+
+    constructor(message: string);
+
+    attachHeaders(response: Response): void;
+}
+
+export declare class CorsError extends BuxtError {
+    constructor(message: string);
 }
 
 export declare type RoutePath = {
@@ -76,7 +92,6 @@ export declare type Route = {
 export declare type RouteParameters = {
     [key: string]: string
 }
-
 
 export type BuxtConfig = {
     port: number,
