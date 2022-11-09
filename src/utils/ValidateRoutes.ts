@@ -40,7 +40,7 @@ const validateRoute: ValidateRoute = async (path: RoutePath): Promise<Route | ne
         throw new Error("Route file must be a Typescript file (or the .ts extension)", { cause: `${path.FullPath} has the extension: ${parts[1]} - or something that ISNT .ts` });
     }
 
-    const params = parts[0].match(/(?<=\[)(.*?)(?=\])/g);
+    //const params = parts[0].match(/(?<=\[)(.*?)(?=\])/g);
 
     return {
         route: parts[0],
