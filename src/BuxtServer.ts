@@ -4,8 +4,8 @@ import ScanPaths from "./utils/ScanPaths";
 import ValidateRoute from "./utils/ValidateRoutes";
 import BuxtRequest from "./BuxtRequest";
 import BuxtResponse from "./BuxtResponse";
-import { Route, RoutePath } from "index";
-import { BuxtConfig, CorsConfig, RouteParameters } from "index.d";
+import CorsError from "./errors/CorsError";
+import { BuxtConfig, CorsConfig, Route, RoutePath } from "index.d";
 
 /**
  * Server class
@@ -40,7 +40,7 @@ export class BuxtServer {
             this.cors = args[0].cors || false;
             this.corsConfig = args[0].corsConfig || null;
         }
-
+        //TODO: This constructor is NOT exhaustive - will probably cause problems at some point
         if (this.port < 1024) {
             console.warn("Be careful when using a port under 1024 as some systems require special permissions to expose them");
         }
@@ -87,7 +87,7 @@ export class BuxtServer {
      * @returns {boolean}
      */
     static validateConfig(config: BuxtConfig): void {
-        const { port, routeRoot, cors, corsConfig } = config;
+        const { routeRoot, cors, corsConfig } = config;
         if (cors && cors === true) {
             if (!corsConfig) {
                 throw new Error(`Must supply a cors config object if cors is set to true`);
@@ -188,7 +188,6 @@ export class BuxtServer {
         
         return res.getResponse();
     }
-
     
     /**
      * Method for handling cors requests
@@ -197,59 +196,78 @@ export class BuxtServer {
      * @private
      * @async
      * @param {Request} req - Request object from underlying request
-     * @returns {(Promise<Response> | null)} - returns null when cors has been disabled by the user, or not explicitly activated.
+     * @returns {string} - the validated origin to be used in the responding cors header.
      */
-    private async handleCors(req: Request): Promise<Response> | null {
-        if (this.cors) {
-            if (req.method === "OPTIONS" || req.headers.get("Sec-Fetch-Mode") === "cors") {
-                console.log("CORS req received");
-
-
-                const originHeader = req.headers.get("Origin");
-                if (!originHeader || originHeader === "") {
-                    const badOriginResp = new Response("CORS Error - Invalid 'Origin' Header", {
-                        statusText: "BAD REQUEST",
-                        status: 400
-                    });
-                    badOriginResp.headers.append("Buxt-Rejection-Cause", "CORS");
-                    badOriginResp.headers.append("Buxt-Rejection-Reason", "Invalid 'Origin' Header");
-                    return badOriginResp;
-                }
-
-                if (!this.corsConfig.origins.includes(originHeader) && this.corsConfig.origins[0] !== "*") {
-                    const noOriginsResp = new Response("CORS Error - This origin is not allowed", {
-                        statusText: "BAD REQUEST",
-                        status: 400
-                    });
-                    noOriginsResp.headers.append("Buxt-Rejection-Cause", "CORS");
-                    noOriginsResp.headers.append("Buxt-Rejection-Reason", "This origin is not allowed");
-                    return noOriginsResp;
-                }
-
-
-                const resp = new Response("OK", {
-                    statusText: "OK",
-                    status: 200
-                });
-
-                const originResponseValue = this.corsConfig.origins.find((s) => {
-                    if (s === originHeader) {
-                        return s;
-                    }
-                });
-
-                if ((!originResponseValue || originResponseValue === "") && (this.corsConfig.origins[0] !== "*")) {
-                    throw new Error(`The origin response header couldnt be made, although it was found in the previous includes clause - if this error ever throws then something is wrong somewhere. Tell Ryan.`);
-                }
-                resp.headers.append("Access-Control-Allow-Origin", originResponseValue || "*");
-                resp.headers.append("Access-Control-Allow-Methods", this.corsConfig.allowedMethods.join(","));
-                resp.headers.append("Connection", "keep-alive");
-                resp.headers.append("Vary", "Access-Control-Request-Headers");
-                resp.headers.append("User-Agent", "Buxt - REST API server for Bun");
-                return resp;
-            }
+    private validateCors(req: Request): string {
+        const originHeader = req.headers.get("Origin");
+        if (!originHeader || originHeader === "") {
+            throw new CorsError("Invalid 'Origin' Header");
         }
-        return null;
+
+        if (!this.corsConfig.origins.includes(originHeader) && this.corsConfig.origins[0] !== "*") {
+            throw new CorsError("This origin is not allowed");
+        }
+
+        const originResponseValue = this.corsConfig.origins.find((s) => {
+            if (s === originHeader) {
+                return s;
+            }
+        });
+
+        if ((!originResponseValue || originResponseValue === "") && (this.corsConfig.origins[0] !== "*")) {
+            throw new Error(`The origin response header couldnt be made, although it was found in the previous includes clause - if this error ever throws then something is wrong somewhere. Tell Ryan.`);
+        }
+
+        return originHeader;
+    }
+
+    
+    /**
+     * Helper method that appends appropriate cors errors - if cors has been enabled
+     * @date 11/9/2022 - 8:43:20 PM
+     *
+     * @private
+     * @param {BuxtResponse} response - the prepared response object that the headers will be appended to
+     * @param {string} origin - the validated origin of the cors request
+     */
+    private appendCorsHeaders(response: BuxtResponse, origin: string): void {
+        response.setHeader("Access-Control-Allow-Origin", origin || "*");
+        response.setHeader("Access-Control-Allow-Methods", this.corsConfig.allowedMethods.join(","));
+        response.setHeader("Connection", "keep-alive");
+        response.setHeader("Vary", "Access-Control-Request-Headers");
+        response.setHeader("User-Agent", "Buxt - REST API server for Bun");
+    }
+
+    
+    /**
+     * Helper method for handling requests that are send with an OPTIONS request
+     * Used in situations where cors is applicable
+     * @date 11/9/2022 - 8:44:26 PM
+     *
+     * @private
+     * @param {Request} req - the underlying request to evaluate for cors
+     * @returns {BuxtResponse} - the response to repond to the cors request with
+     */
+    private handleCorsOptionsRequest(req: Request): BuxtResponse {
+        const origin = this.validateCors(req);
+        const res = new BuxtResponse();
+        this.appendCorsHeaders(res, origin);
+        return res;
+    }
+
+    
+    /**
+     * Helper method for handling requests that include headers for a cors-related request
+     * Used in situations where cors is applicable
+     * @date 11/9/2022 - 8:45:23 PM
+     *
+     * @private
+     * @param {Request} req - the underlying request
+     * @param {BuxtResponse} res - the prepared response object that will have cors headers appended
+     */
+    private handleCorsHeaderRequest(req: Request, res: BuxtResponse): void {
+        const origin = this.validateCors(req);
+        this.appendCorsHeaders(res, origin);
     }
 
     /**
@@ -266,23 +284,46 @@ export class BuxtServer {
         });
 
         Bun.serve({
+            port: this.port,
             fetch: async (req) => {
+                try {
+                    const bRes = new BuxtResponse();
 
-                const isCors = await this.handleCors(req);
-                if (isCors) {
-                    return isCors;
-                }
+                    if (this.cors) {
+                        if (req.method === "OPTIONS") {
+                            return this.handleCorsOptionsRequest(req)
+                                .getResponse();
+                        }
 
-                const bReq = await BuxtRequest.buildRequest(req);
-                const bRes = new BuxtResponse();
+                        if (req.headers.get("Sec-Fetch-Mode") === "cors") {
+                            this.handleCorsHeaderRequest(req, bRes);
+                        }
+                    }
+    
+                    const bReq = await BuxtRequest.buildRequest(req);
+    
+                    const route = this.matchRoute(bReq.matchPath);
+    
+                    if (route) {
+                        bReq.routeParameters = route.routeParameters;
+                        return await this.handleRequest(bReq, bRes, route);
+                    } else {
+                        return new Response("Not Found", { status: 404, statusText: "NOT FOUND" });
+                    }
+                } catch (error) {
+                    if (error instanceof CorsError) {
+                        const res = new Response("Cors Error", {
+                            status: 403,
+                            statusText: "Forbidden"
+                        });
+                        error.attachHeaders(res);
+                        return res;
+                    }
 
-                const route = this.matchRoute(bReq.matchPath);
-
-                if (route) {
-                    bReq.routeParameters = route.routeParameters;
-                    return await this.handleRequest(bReq, bRes, route);
-                } else {
-                    return new Response("Not Found", { status: 404, statusText: "NOT FOUND" });
+                    return new Response(error, {
+                        status: 500,
+                        statusText: "Internal Server Error"
+                    });
                 }
             }
         })
