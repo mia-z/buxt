@@ -13,6 +13,8 @@ import { cwd } from "process";
  * @param {string} basePath - the base filesystem path where the routes are located. By default this is <project-root>/routes
  * @param {string} currentPath - the current path being recursed
  * @returns {Promise<Array<RoutePath>>} - array of {RoutePath} containing data about scanned directory
+ * @remarks This could probably be split into 2 functions to make it slightly faster?
+ * - 1 function as the main, and 1 recurse function which just does the directory scanning
  */
 const ScanPaths: ScanPaths = async (basePath: string, currentPath: string): Promise<Array<RoutePath>> => {
     try {
