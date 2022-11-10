@@ -7,3 +7,5 @@ README.md
 src
 .swcrc
 README.md
+Dockerfile
+*.sh
