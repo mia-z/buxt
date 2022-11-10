@@ -1,6 +1,6 @@
 {
   "name": "buxt",
-  "version": "0.0.13-alpha",
+  "version": "0.0.14-alpha",
   "author": "Ryan C",
   "module": "index.ts",
   "type": "module",
@@ -33,5 +33,15 @@
     "@swc/core": "^1.3.14",
     "bun-types": "^0.2.2"
   },
-  "keywords": ["typescript", "bun", "bunjs", "zigg", "api", "rest", "routes", "framework", "javascript"]
+  "keywords": [
+    "typescript",
+    "bun",
+    "bunjs",
+    "zigg",
+    "api",
+    "rest",
+    "routes",
+    "framework",
+    "javascript"
+  ]
 }
