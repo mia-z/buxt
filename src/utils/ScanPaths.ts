@@ -30,7 +30,6 @@ const ScanPaths: ScanPaths = async (basePath: string, currentPath: string): Prom
         //This is just meant to exhaust the 2 default paths (routes and src/routes) if a custom route root is not given in the config.
         if (basePath === "routes") {
             const rootExists = existsSync(thisPath);
-            console.log(rootExists);
             if (!rootExists) {
                 return await ScanPaths("src/routes", "");
             } else if (rootExists) { 

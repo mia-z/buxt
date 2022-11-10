@@ -1,5 +1,7 @@
 import { Transpiler } from "bun";
 import { Route, RoutePath, ValidateRoute } from "index.d";
+import { join } from "path";
+import { cwd } from "process";
 
 const transpiler = new Transpiler({ loader: "ts" });
 
@@ -19,7 +21,7 @@ const validateRoute: ValidateRoute = async (path: RoutePath): Promise<Route | ne
         throw new Error("Module must be a Typescript file", { cause: `${path} does not point to a Typescript file` });
     }
 
-    const loadedFile = await Bun.file(path.FullPath);
+    const loadedFile = await Bun.file(join(cwd(), path.FullPath));
     const fileContents = await loadedFile.text();
     const transpiled = await transpiler.scan(fileContents);
     if (!transpiled.exports.includes("default")) {
@@ -28,7 +30,7 @@ const validateRoute: ValidateRoute = async (path: RoutePath): Promise<Route | ne
     if (transpiled.exports.length > 1) {
         throw new Error("Route must have only a single export that is default (for now)", { cause: `${path.FullPath} exports more than just default` });
     }
-    if (typeof require(path.FullPath).default !== "function") {
+    if (typeof require(join(cwd(), path.FullPath)).default !== "function") {
         throw new Error("Route must export a default function", { cause: `${path.FullPath} default export is not a function` });
     }
 
@@ -40,12 +42,14 @@ const validateRoute: ValidateRoute = async (path: RoutePath): Promise<Route | ne
         throw new Error("Route file must be a Typescript file (or the .ts extension)", { cause: `${path.FullPath} has the extension: ${parts[1]} - or something that ISNT .ts` });
     }
 
-    //const params = parts[0].match(/(?<=\[)(.*?)(?=\])/g);
+    const delegate = await import(join(cwd(), path.FullPath));
 
     return {
         route: parts[0],
         routeParameters: {},
-        delegate: require(path.FullPath).default
+        // delegate: require(path.FullPath).default,
+        delegate: delegate.default
+
     };
 }
 
