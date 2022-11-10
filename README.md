@@ -119,7 +119,7 @@ type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "OPTIONS" | "HEAD" | "PATC
 ```
 
 ### <u><b>Route parameters</b></u>
-Route parameters work they they do in Next.js - they're denoted by a variable name surrounded by square brackets, eg: routes/user/[user].ts
+Route parameters work like they do in Next.js - they're denoted by a variable name surrounded by square brackets, eg: routes/user/[user].ts
 
 They can then be accessed on the BuxtRequest object under `req.routeParameters.{variable_name}`
 ``` typescript
