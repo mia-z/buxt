@@ -63,7 +63,7 @@ By default, the app will search for exported functions under <b>\<project-root>/
 Aside from the previous example, there are three other ways of creating and starting a buxt server:
 
 
-### <b><u>Create a server with default route root using port 3000</u></b>
+### <b><u>Create a server using port 3000 with default route root</u></b>
 ``` typescript
 //index.ts
 import CreateServer from "buxt";
@@ -72,7 +72,7 @@ const server = await CreateServer(3000);
 await server.listen();
 ```
 
-### <u><b>Create a server with default route root using port 3000 and a custom root route path</b></u>
+### <u><b>Create a server using port 3000 and a custom root route path</b></u>
 
 ``` typescript
 //index.ts
